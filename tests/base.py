@@ -34,7 +34,7 @@ cyclonedx_bom_name: str = 'cyclonedx-bom'
 cyclonedx_bom_version: str = version(cyclonedx_bom_name)
 cyclonedx_lib_name: str = 'cyclonedx-python-lib'
 cyclonedx_lib_version: str = version(cyclonedx_lib_name)
-single_uuid: str = 'urn:uuid:{}'.format(uuid4())
+single_uuid: str = f'urn:uuid:{uuid4()}'
 
 
 class BaseJsonTestCase(TestCase):
@@ -82,8 +82,10 @@ class BaseXmlTestCase(TestCase):
 
     def assertEqualXml(self, a: str, b: str):
         da, db = minidom.parseString(a), minidom.parseString(b)
-        self.assertTrue(self._is_equal_xml_element(da.documentElement, db.documentElement),
-                        'XML Documents are not equal: \n{}\n{}'.format(da.toxml(), db.toxml()))
+        self.assertTrue(
+            self._is_equal_xml_element(da.documentElement, db.documentElement),
+            f'XML Documents are not equal: \n{da.toxml()}\n{db.toxml()}',
+        )
 
     def assertEqualXmlBom(self, a: str, b: str, namespace: str):
         """
@@ -105,18 +107,29 @@ class BaseXmlTestCase(TestCase):
         if metadata_ts_b is not None:
             metadata_ts_b.text = now.isoformat()
 
-        # Align 'this' Tool Version
-        lib_tool = ba.find('.//*/{{{}}}tool[{{{}}}name="cyclonedx-python-lib"]'.format(namespace, namespace))
-        if lib_tool:
+        if lib_tool := ba.find(
+            './/*/{{{}}}tool[{{{}}}name="cyclonedx-python-lib"]'.format(
+                namespace, namespace
+            )
+        ):
             lib_tool.find('./{{{}}}version'.format(namespace)).text = cyclonedx_lib_version
-        lib_tool = bb.find('.//*/{{{}}}tool[{{{}}}name="cyclonedx-python-lib"]'.format(namespace, namespace))
-        if lib_tool:
+        if lib_tool := bb.find(
+            './/*/{{{}}}tool[{{{}}}name="cyclonedx-python-lib"]'.format(
+                namespace, namespace
+            )
+        ):
             lib_tool.find('./{{{}}}version'.format(namespace)).text = cyclonedx_lib_version
-        this_tool = ba.find('.//*/{{{}}}tool[{{{}}}name="cyclonedx-bom"]'.format(namespace, namespace))
-        if this_tool:
+        if this_tool := ba.find(
+            './/*/{{{}}}tool[{{{}}}name="cyclonedx-bom"]'.format(
+                namespace, namespace
+            )
+        ):
             this_tool.find('./{{{}}}version'.format(namespace)).text = cyclonedx_bom_version
-        this_tool = bb.find('.//*/{{{}}}tool[{{{}}}name="cyclonedx-bom"]'.format(namespace, namespace))
-        if this_tool:
+        if this_tool := bb.find(
+            './/*/{{{}}}tool[{{{}}}name="cyclonedx-bom"]'.format(
+                namespace, namespace
+            )
+        ):
             this_tool.find('./{{{}}}version'.format(namespace)).text = cyclonedx_bom_version
 
         self.assertEqualXml(

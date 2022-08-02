@@ -46,7 +46,7 @@ class CycloneDxCmd:
         if self._arguments.debug_enabled:
             self._DEBUG_ENABLED = True
             self._debug_message('!!! DEBUG MODE ENABLED !!!')
-            self._debug_message('Parsed Arguments: {}'.format(self._arguments))
+            self._debug_message(f'Parsed Arguments: {self._arguments}')
 
     def get_output(self) -> BaseOutput:
         parser = self._get_input_parser()
@@ -58,7 +58,7 @@ class CycloneDxCmd:
             print('!! numbers in your requirements.txt                     !!')
             print('!!                                                      !!')
             for warning in parser.get_warnings():
-                print('!! -> {} !!'.format(warning.get_item().ljust(49)))
+                print(f'!! -> {warning.get_item().ljust(49)} !!')
             print('!!                                                      !!')
             print('!! The above will NOT be included in the generated      !!')
             print('!! CycloneDX as version is a mandatory field.           !!')
@@ -79,9 +79,9 @@ class CycloneDxCmd:
         return get_instance(
             bom=bom,
             output_format=OutputFormat[str(self._arguments.output_format).upper()],
-            schema_version=SchemaVersion['V{}'.format(
-                str(self._arguments.output_schema_version).replace('.', '_')
-            )]
+            schema_version=SchemaVersion[
+                f"V{str(self._arguments.output_schema_version).replace('.', '_')}"
+            ],
         )
 
     def execute(self):
@@ -93,7 +93,7 @@ class CycloneDxCmd:
 
         # Check directory writable
         output_filename = os.path.realpath(self._arguments.output_file)
-        self._debug_message('Will be outputting SBOM to file at: {}'.format(output_filename))
+        self._debug_message(f'Will be outputting SBOM to file at: {output_filename}')
         output.output_to_file(filename=output_filename, allow_overwrite=self._arguments.output_file_overwrite)
 
     @staticmethod
@@ -174,11 +174,11 @@ class CycloneDxCmd:
 
     def _debug_message(self, message: str):
         if self._DEBUG_ENABLED:
-            print('[DEBUG] - {} - {}'.format(datetime.now(), message))
+            print(f'[DEBUG] - {datetime.now()} - {message}')
 
     @staticmethod
     def _error_and_exit(message: str, exit_code: int = 1):
-        print('[ERROR] - {} - {}'.format(datetime.now(), message))
+        print(f'[ERROR] - {datetime.now()} - {message}')
         exit(exit_code)
 
     def _get_input_parser(self) -> BaseParser:

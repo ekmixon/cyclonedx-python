@@ -92,9 +92,12 @@ class TestCycloneDxXml(BaseXmlTestCase):
                 '-o', os.path.join(dirname, 'sbom.xml'),
             ])
 
-            with open(os.path.join(dirname, 'sbom.xml'), 'r') as f, \
-                    open(os.path.join(FIXTURES_DIRECTORY, 'bom_v{}_setuptools.xml'.format(schema_version))) as expected:
-                self.assertEqualXmlBom(f.read(), expected.read(),
-                                       namespace='http://cyclonedx.org/schema/bom/{}'.format(schema_version))
+            with open(os.path.join(dirname, 'sbom.xml'), 'r') as f, open(os.path.join(FIXTURES_DIRECTORY, f'bom_v{schema_version}_setuptools.xml')) as expected:
+                self.assertEqualXmlBom(
+                    f.read(),
+                    expected.read(),
+                    namespace=f'http://cyclonedx.org/schema/bom/{schema_version}',
+                )
+
                 f.close()
                 expected.close()
